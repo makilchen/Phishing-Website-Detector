@@ -1,0 +1,22 @@
+{
+  "Logistic Regression": {
+    "accuracy": 93.75,
+    "precision": 92.31,
+    "recall": 95.4
+  },
+  "Decision Tree": {
+    "accuracy": 92.5,
+    "precision": 92.83,
+    "recall": 92.05
+  },
+  "Random Forest": {
+    "accuracy": 93.12,
+    "precision": 92.21,
+    "recall": 94.14
+  },
+  "SVM": {
+    "accuracy": 92.92,
+    "precision": 92.18,
+    "recall": 93.72
+  }
+}
