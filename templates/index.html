@@ -8,15 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e14;
-    --panel: #10161f;
-    --border: #1e2833;
-    --text: #c9d6e3;
-    --text-dim: #6b7c8f;
-    --cyan: #38bdf8;
-    --amber: #ff6b4a;
+    --bg: #0c0a16;
+    --panel: #161225;
+    --border: #2b2444;
+    --text: #d8d2e6;
+    --text-dim: #7d7396;
+    --cyan: #a78bfa;
+    --amber: #fbbf24;
     --green: #22c55e;
-    --red: #ef4444;
+    --red: #f43f5e;
     --mono: 'JetBrains Mono', monospace;
     --sans: 'Inter', sans-serif;
   }
@@ -27,18 +27,38 @@
     margin: 0;
     min-height: 100vh;
     background: var(--bg);
-    background-image:
-      radial-gradient(circle at 20% 0%, rgba(56, 189, 248, 0.06), transparent 40%),
-      radial-gradient(circle at 80% 100%, rgba(255, 107, 74, 0.05), transparent 40%);
     color: var(--text);
     font-family: var(--sans);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px;
+    position: relative;
+    overflow-x: hidden;
   }
 
-  .wrap { width: 100%; max-width: 640px; }
+  #bgVideo {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    filter: saturate(1.35) contrast(1.05) brightness(1.08);
+  }
+
+  #bgOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 45%, rgba(8,6,14,0.55) 100%);
+  }
+
+  #bgCanvas {
+    display: none;
+  }
+
+  .wrap { width: 100%; max-width: 640px; position: relative; z-index: 1; }
 
   .eyebrow {
     font-family: var(--mono);
@@ -56,7 +76,11 @@
     width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--green);
-    box-shadow: 0 0 8px var(--green);
+    animation: pulseDot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 4px var(--green), 0 0 2px var(--green); }
+    50% { box-shadow: 0 0 14px var(--green), 0 0 6px var(--green); }
   }
 
   h1 {
@@ -76,12 +100,18 @@
   }
 
   .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: rgba(22, 18, 39, 0.55);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(167, 139, 250, 0.22);
     border-radius: 10px;
     padding: 24px;
     position: relative;
     overflow: hidden;
+    box-shadow:
+      0 20px 60px -20px rgba(0,0,0,0.6),
+      0 0 90px -10px rgba(245,242,255,0.16),
+      0 0 200px 10px rgba(245,242,255,0.06);
   }
 
   .scan-line {
@@ -117,7 +147,7 @@
 
   input[type="text"] {
     flex: 1;
-    background: #060a10;
+    background: rgba(6, 10, 16, 0.55);
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 13px 14px;
@@ -125,10 +155,10 @@
     font-family: var(--mono);
     font-size: 14px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     min-width: 0;
   }
-  input[type="text"]:focus { border-color: var(--cyan); }
+  input[type="text"]:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(167,139,250,0.15); }
   input[type="text"]::placeholder { color: #3d4a58; }
 
   button {
@@ -144,7 +174,7 @@
     cursor: pointer;
     transition: filter 0.15s, transform 0.1s;
   }
-  button:hover { filter: brightness(1.1); }
+  button:hover { filter: brightness(1.1); box-shadow: 0 0 24px -4px rgba(167,139,250,0.55); }
   button:active { transform: scale(0.98); }
   button:disabled { opacity: 0.5; cursor: default; }
   button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
@@ -179,6 +209,14 @@
     border-radius: 6px;
     letter-spacing: 0.03em;
   }
+  .badge.stamp-in {
+    animation: stampIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes stampIn {
+    0% { transform: scale(1.5) rotate(-6deg); opacity: 0; }
+    55% { transform: scale(0.94) rotate(1.5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
   .badge.safe { background: rgba(34, 197, 94, 0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
   .badge.danger { background: rgba(239, 68, 68, 0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
 
@@ -193,7 +231,7 @@
     font-family: var(--mono);
     font-size: 12.5px;
     color: var(--text-dim);
-    background: #060a10;
+    background: rgba(6, 10, 16, 0.45);
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 14px;
@@ -242,6 +280,11 @@
 </style>
 </head>
 <body>
+<video id="bgVideo" autoplay muted loop playsinline>
+  <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260411_104032_69319010-2458-492b-b04d-b40a5dfa4482.mp4" type="video/mp4">
+</video>
+<div id="bgOverlay"></div>
+<canvas id="bgCanvas"></canvas>
 <div class="wrap">
   <div class="eyebrow">system online</div>
   <h1>URL Scanner</h1>
@@ -340,6 +383,8 @@ form.addEventListener('submit', async (e) => {
     setTimeout(() => {
       badge.textContent = data.label === "Phishing" ? "⚠ Phishing" : "✓ Legitimate";
       badge.className = "badge " + (data.label === "Phishing" ? "danger" : "safe");
+      void badge.offsetWidth;
+      badge.classList.add("stamp-in");
       confidenceVal.textContent = data.confidence + "%";
       metaModel.textContent = "model: " + data.model_used;
 
@@ -366,6 +411,108 @@ form.addEventListener('submit', async (e) => {
     }, 350);
   }
 });
+</script>
+<script>
+// Ambient animated background: drifting particle network + slow scan beam.
+// Pure canvas, no video file needed — stays lightweight and fully offline.
+(function () {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w, h, dpr;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['167,139,250', '34,197,94']; // violet, green (rgb triplets)
+  const NODE_COUNT = Math.min(60, Math.floor((w * h) / 22000));
+  const LINK_DIST = 130;
+
+  const nodes = Array.from({ length: NODE_COUNT }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: (Math.random() - 0.5) * 0.15,
+    r: Math.random() * 1.4 + 0.6,
+    c: COLORS[Math.random() < 0.75 ? 0 : 1],
+  }));
+
+  let scanY = -100;
+  const scanSpeed = 0.35;
+
+  function step() {
+    ctx.clearRect(0, 0, w, h);
+
+    // drift + draw nodes
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+    }
+
+    // connecting links between nearby nodes
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < LINK_DIST) {
+          const alpha = (1 - dist / LINK_DIST) * 0.10;
+          ctx.strokeStyle = `rgba(${a.c},${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // nodes themselves
+    for (const n of nodes) {
+      ctx.fillStyle = `rgba(${n.c},0.55)`;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // slow horizontal scan beam sweeping down the page
+    const grad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 60);
+    grad.addColorStop(0, 'rgba(167,139,250,0)');
+    grad.addColorStop(0.5, 'rgba(167,139,250,0.05)');
+    grad.addColorStop(1, 'rgba(167,139,250,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, scanY - 60, w, 120);
+    ctx.strokeStyle = 'rgba(167,139,250,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, scanY);
+    ctx.lineTo(w, scanY);
+    ctx.stroke();
+
+    scanY += scanSpeed;
+    if (scanY > h + 100) scanY = -100;
+
+    if (!reduceMotion) requestAnimationFrame(step);
+  }
+
+  if (reduceMotion) {
+    step(); // draw one static frame, skip animation loop
+  } else {
+    requestAnimationFrame(step);
+  }
+})();
 </script>
 </body>
 </html>
